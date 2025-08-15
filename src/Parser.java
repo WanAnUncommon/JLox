@@ -24,13 +24,32 @@ class Parser {
     }
 
     private Expr comma() {
-        Expr expr=equality();
+        Expr expr = ternary();
         while (match(TokenType.COMMA)) {
             Token operator = previous();
-            Expr right = equality();
+            Expr right = ternary();
             expr = new Expr.Binary(expr, operator, right);
         }
         return expr;
+    }
+
+    // todo 目前是左结合，应改为右结合
+    private Expr ternary() {
+        Expr expr = equality();
+        while (match(TokenType.QUESTION)) {
+            Token operator = previous();
+            Expr left = ternary();
+            Expr right = colon();
+            expr = new Expr.Ternary(expr, operator, left, right);
+        }
+        return expr;
+    }
+
+    private Expr colon() {
+        if (match(TokenType.COLON)) {
+            return equality();
+        }
+        throw error(previous(), "Expect ':'.");
     }
 
     private Expr equality() {

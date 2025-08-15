@@ -78,6 +78,12 @@ class Scanner {
             case '*':
                 addToken(TokenType.STAR);
                 break;
+            case '?':
+                addToken(TokenType.QUESTION);
+                break;
+            case ':':
+                addToken(TokenType.COLON);
+                break;
             case '!':
                 addToken(match('=') ? TokenType.BANG_EQUAL : TokenType.BANG);
                 break;
@@ -165,13 +171,13 @@ class Scanner {
     }
 
     private void blockComment() {
-        while (!isAtEnd()){
+        while (!isAtEnd()) {
             if (peek() == '*' && peekNext() == '/') {
                 advance();
                 advance();
                 return;
             }
-            if (peek() == '\n'){
+            if (peek() == '\n') {
                 line++;
             }
             advance();
