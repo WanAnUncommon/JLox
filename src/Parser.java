@@ -33,7 +33,6 @@ class Parser {
         return expr;
     }
 
-    // todo 目前是左结合，应改为右结合
     private Expr ternary() {
         Expr expr = equality();
         while (match(TokenType.QUESTION)) {
@@ -47,7 +46,7 @@ class Parser {
 
     private Expr colon() {
         if (match(TokenType.COLON)) {
-            return equality();
+            return ternary();
         }
         throw error(previous(), "Expect ':'.");
     }
