@@ -13,7 +13,11 @@ class Parser {
 
     Expr parse() {
         try {
-            return expression();
+            Expr expression = expression();
+            if (current <= tokens.size() - 2) {
+                throw error(peek(), "Expect end of expression.");
+            }
+            return expression;
         } catch (ParseError error) {
             return null;
         }
@@ -23,7 +27,14 @@ class Parser {
         return comma();
     }
 
+    // 解析逗号表达式
     private Expr comma() {
+        // 处理运算符在左侧的错误
+        if (match(TokenType.COMMA)) {
+            Token operator = previous();
+            Expr right = ternary();
+            throw error(operator, "Need left operand.");
+        }
         Expr expr = ternary();
         while (match(TokenType.COMMA)) {
             Token operator = previous();
@@ -33,7 +44,14 @@ class Parser {
         return expr;
     }
 
+    // 解析三元表达式
     private Expr ternary() {
+        if (match(TokenType.QUESTION)) {
+            Token operator = previous();
+            Expr left = ternary();
+            Expr right = colon();
+            throw error(operator, "Need left operand.");
+        }
         Expr expr = equality();
         while (match(TokenType.QUESTION)) {
             Token operator = previous();
@@ -44,6 +62,7 @@ class Parser {
         return expr;
     }
 
+    // 解析冒号表达式
     private Expr colon() {
         if (match(TokenType.COLON)) {
             return ternary();
@@ -52,6 +71,11 @@ class Parser {
     }
 
     private Expr equality() {
+        if (match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL)) {
+            Token operator = previous();
+            Expr right = comparison();
+            throw error(operator, "Need left operand.");
+        }
         Expr expr = comparison();
         while (match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL)) {
             Token operator = previous();
@@ -62,6 +86,11 @@ class Parser {
     }
 
     private Expr comparison() {
+        if (match(TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESS, TokenType.LESS_EQUAL)) {
+            Token operator = previous();
+            Expr right = term();
+            throw error(operator, "Need left operand.");
+        }
         Expr expr = term();
         while (match(TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESS, TokenType.LESS_EQUAL)) {
             Token operator = previous();
@@ -71,7 +100,13 @@ class Parser {
         return expr;
     }
 
+    // 解析加减法表达式
     private Expr term() {
+        if (match(TokenType.PLUS)) {
+            Token operator = previous();
+            Expr right = factor();
+            throw error(operator, "Need left operand.");
+        }
         Expr expr = factor();
         while (match(TokenType.MINUS, TokenType.PLUS)) {
             Token operator = previous();
@@ -81,7 +116,13 @@ class Parser {
         return expr;
     }
 
+    // 解析乘除法表达式
     private Expr factor() {
+        if (match(TokenType.SLASH, TokenType.STAR)) {
+            Token operator = previous();
+            Expr right = unary();
+            throw error(operator, "Need left operand.");
+        }
         Expr expr = unary();
         while (match(TokenType.SLASH, TokenType.STAR)) {
             Token operator = previous();
@@ -91,6 +132,7 @@ class Parser {
         return expr;
     }
 
+    // 解析一元表达式
     private Expr unary() {
         if (match(TokenType.BANG, TokenType.MINUS)) {
             Token operator = previous();
