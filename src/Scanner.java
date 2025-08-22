@@ -3,6 +3,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 扫描器
+ * 将源代码扫描成Token
+ *
+ * @author WanAn
+ */
 class Scanner {
     private final String source;
     private final List<Token> tokens = new ArrayList<>();

@@ -1,3 +1,9 @@
+/**
+ * 抽象语法树
+ * 构建包含Expression和Token的语法树结构
+ *
+ * @author WanAn
+ */
 abstract class Expr {
     interface Visitor<R> {
         R visitTernaryExpr(Ternary expr);
@@ -12,7 +18,7 @@ abstract class Expr {
     }
 
     static class Ternary extends Expr {
-        Ternary(Expr condition, Token operator, Expr left,Expr right) {
+        Ternary(Expr condition, Token operator, Expr left, Expr right) {
             this.condition = condition;
             this.operator = operator;
             this.left = left;

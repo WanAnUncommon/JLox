@@ -1,3 +1,8 @@
+/**
+ * 打印输出AST（抽象语法树）
+ *
+ * @author WanAn
+ */
 class AstPrinter implements Expr.Visitor<String> {
     String print(Expr expr) {
         return expr.accept(this);
@@ -5,7 +10,7 @@ class AstPrinter implements Expr.Visitor<String> {
 
     @Override
     public String visitTernaryExpr(Expr.Ternary expr) {
-        return parenthesize("?:", expr.condition,expr.left, expr.right);
+        return parenthesize("?:", expr.condition, expr.left, expr.right);
     }
 
     @Override

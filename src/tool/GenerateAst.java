@@ -6,6 +6,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * 帮助快速生成Expr类 （现已不完整，Expr类已新增功能）
+ *
+ * @author WanAn
+ */
 public class GenerateAst {
     public static void main(String[] args) throws IOException {
         if (args.length != 1) {

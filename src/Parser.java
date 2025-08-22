@@ -1,5 +1,11 @@
 import java.util.List;
 
+/**
+ * 解析器
+ * 将Token解析成表达式
+ *
+ * @author WanAn
+ */
 class Parser {
     static class ParseError extends RuntimeException {
     }
