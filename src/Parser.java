@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,20 +18,57 @@ class Parser {
         this.tokens = tokens;
     }
 
-    Expr parse() {
-        try {
-            Expr expression = expression();
-            if (current <= tokens.size() - 2) {
-                throw error(peek(), "Expect end of expression.");
-            }
-            return expression;
-        } catch (ParseError error) {
-            return null;
+    List<Stmt> parse() {
+        List<Stmt> stmts = new ArrayList<>();
+        while (!isAtEnd()) {
+            stmts.add(declaration());
         }
+        return stmts;
     }
 
     private Expr expression() {
         return comma();
+    }
+
+    private Stmt declaration() {
+        try {
+            if (match(TokenType.VAR)) {
+                return varStatement();
+            }
+            return statement();
+        } catch (ParseError error) {
+            synchronize();
+            return null;
+        }
+    }
+
+    private Stmt statement() {
+        if (match(TokenType.PRINT)) {
+            return printStatement();
+        }
+        return expressionStatement();
+    }
+
+    private Stmt printStatement() {
+        Expr value = expression();
+        consume(TokenType.SEMICOLON, "Expect ';' after value.");
+        return new Stmt.Print(value);
+    }
+
+    private Stmt varStatement() {
+        Token name = consume(TokenType.IDENTIFIER, "Expect variable name.");
+        Expr initializer = null;
+        if (match(TokenType.EQUAL)) {
+            initializer = expression();
+        }
+        consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.");
+        return new Stmt.Var(name, initializer);
+    }
+
+    private Stmt expressionStatement() {
+        Expr expr = expression();
+        consume(TokenType.SEMICOLON, "Expect ';' after expression.");
+        return new Stmt.Expression(expr);
     }
 
     // 解析逗号表达式
@@ -160,6 +198,9 @@ class Parser {
         }
         if (match(TokenType.NUMBER, TokenType.STRING)) {
             return new Expr.Literal(previous().literal);
+        }
+        if (match(TokenType.IDENTIFIER)) {
+            return new Expr.Variable(previous());
         }
         if (match(TokenType.LEFT_PAREN)) {
             Expr expr = expression();
