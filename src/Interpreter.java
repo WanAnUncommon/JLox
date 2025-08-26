@@ -10,6 +10,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
     private Environment environment = new Environment();
 
+    // 执行语句
     void interpret(List<Stmt> statements) {
         try {
             for (Stmt statement : statements) {

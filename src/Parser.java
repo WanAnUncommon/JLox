@@ -18,6 +18,7 @@ class Parser {
         this.tokens = tokens;
     }
 
+    // 解析语句
     List<Stmt> parse() {
         List<Stmt> stmts = new ArrayList<>();
         while (!isAtEnd()) {

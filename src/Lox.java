@@ -42,12 +42,14 @@ public class Lox {
     }
 
     // 运行命令行
+    // todo 目前命令行只能输入语句，希望能输入表达式执行（例如输入 1+1 回显 2）
     private static void runPrompt() throws IOException {
         InputStreamReader input = new InputStreamReader(System.in);
         BufferedReader reader = new BufferedReader(input);
         for (; ; ) {
             System.out.print("> ");
             String line = reader.readLine();
+            // 空行继续，以提升用户体验
             if (line == null || line.isEmpty()) {
                 continue;
             }
