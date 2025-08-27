@@ -116,8 +116,11 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     public Void visitVarStmt(Stmt.Var stmt) {
         Object value = null;
         if (stmt.initializer != null) {
+            // 先声明（为了解决 var a = a+1; 这种作用域混乱的情况:子域内的a应该屏蔽父域内的a，所以这里理应报a未初始化错误）
+            environment.define(stmt.name.lexeme, null, false);
+            // 再赋值
             value = evaluate(stmt.initializer);
-            environment.define(stmt.name.lexeme, value, true);
+            environment.assign(stmt.name, value);
         } else {
             environment.define(stmt.name.lexeme, value, false);
         }
